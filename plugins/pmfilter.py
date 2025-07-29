@@ -884,7 +884,7 @@ async def cb_handler(client: Client, query: CallbackQuery):
         await query.answer("Eᴠᴇʀʏᴛʜɪɴɢ's Gᴏɴᴇ")
         await query.message.edit('ꜱᴜᴄᴄᴇꜱꜱꜰᴜʟʟʏ ᴅᴇʟᴇᴛᴇᴅ ᴀʟʟ ɪɴᴅᴇxᴇᴅ ꜰɪʟᴇꜱ ✅')
 
-    if query.data.startswith("checksub"):
+    elif query.data.startswith("checksub"):
         try:
             ident, kk, file_id = query.data.split("#")
             chat = file_id.split("_")[0]
