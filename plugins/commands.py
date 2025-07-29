@@ -227,18 +227,18 @@ async def start(client, message):
         pre, grp_id, file_id = "", 0, data
 
    
-    if not await db.has_premium_access(message.from_user.id):
+    if not await db.has_premium_access(message.from_user.id): #update
+        print("User doesn't have premium access", message.from_user.id)
         btn = []
         try:
             chat = int(data.split("_", 2)[1])
-            if AUTH_CHANNELS:
-                settings      = await get_settings(chat)
-                fsub_channels = settings.get("fsub", AUTH_CHANNELS) if settings else AUTH_CHANNELS
+            settings      = await get_settings(chat)
+            fsub_channels = settings.get("fsub", AUTH_CHANNELS) if settings else AUTH_CHANNELS
+            rqfsub_channels = settings.get("reqfsub", AUTH_REQ_CHANNELS) if settings else AUTH_REQ_CHANNELS
+            if fsub_channels:
                 btn += await is_subscribed(client, message.from_user.id, fsub_channels)
-            if AUTH_REQ_CHANNELS:
-                settings        = await get_settings(chat)
-                rqfsub_channels = settings.get("reqfsub", AUTH_REQ_CHANNELS) if settings else AUTH_REQ_CHANNELS
-                btn += await is_req_subscribed(client, message.from_user.id, rqfsub_channels)
+            if rqfsub_channels:
+                btn += await is_req_subscribed(client, message.from_user.id, rqfsub_channels, int(chat))
             if btn:
                 if len(message.command) > 1 and "_" in message.command[1]:
                     kk, file_id = message.command[1].split("_", 1)
@@ -1390,7 +1390,7 @@ async def reset_all_settings(client, message):
             quote=True
         )
         
-@Client.on_message(filters.command('set_req_fsub')) #update
+@Client.on_message(filters.command('set_req_fsub'))
 async def set_req_fsub(client, message):
     try:
         userid = message.from_user.id if message.from_user else None

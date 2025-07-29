@@ -49,7 +49,10 @@ class temp(object):
     VERIFICATIONS = {}
     TEMP_INVITE_LINKS = {}
 
-async def is_req_subscribed(bot, user_id, rqfsub_channels):
+
+# In utils.py
+
+async def is_req_subscribed(bot, user_id, rqfsub_channels, group_id): # Add group_id #update
     btn = []
     for ch_id in rqfsub_channels:
         if await db.has_joined_channel(user_id, ch_id):
@@ -66,8 +69,11 @@ async def is_req_subscribed(bot, user_id, rqfsub_channels):
 
         try:
             chat   = await bot.get_chat(ch_id)
+            # Create a unique name for the invite link to track the source group
+            invite_link_name = f"req_{group_id}"
             invite = await bot.create_chat_invite_link(
                 ch_id,
+                name=invite_link_name,
                 creates_join_request=True
             )
             btn.append([InlineKeyboardButton(f"⛔️ Join {chat.title}", url=invite.invite_link)])
@@ -77,6 +83,7 @@ async def is_req_subscribed(bot, user_id, rqfsub_channels):
             logger.warning(f"Invite link error for {ch_id}: {e}")
             
     return btn
+
 
 
 
@@ -379,7 +386,7 @@ def generate_settings_text(settings, title, reset_done=False):
 
 📝 <b>ʟᴏɢ ᴄʜᴀɴɴᴇʟ ɪᴅ</b> - <code>{settings.get("log", "N/A")}</code>
 🚫 <b>ꜰꜱᴜʙ ᴄʜᴀɴɴᴇʟ ɪᴅ</b> - <code>{settings.get("fsub", "N/A")}</code>
-🚫 <b>ʀᴇǫ ғꜱᴜʙ ᴄʜᴀɴɴᴇʟ ɪᴅ</b> - <code>{settings.get("reqfsub", "N/A")}</code> #update
+🚫 <b>ʀᴇǫ ғꜱᴜʙ ᴄʜᴀɴɴᴇʟ ɪᴅ</b> - <code>{settings.get("reqfsub", "N/A")}</code>
 
 🎯 <b>ɪᴍᴅʙ ᴛᴇᴍᴘʟᴀᴛᴇ</b> - <code>{settings.get("template", "N/A")}</code>
 

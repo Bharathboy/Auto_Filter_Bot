@@ -884,7 +884,7 @@ async def cb_handler(client: Client, query: CallbackQuery):
         await query.answer("Eᴠᴇʀʏᴛʜɪɴɢ's Gᴏɴᴇ")
         await query.message.edit('ꜱᴜᴄᴄᴇꜱꜱꜰᴜʟʟʏ ᴅᴇʟᴇᴛᴇᴅ ᴀʟʟ ɪɴᴅᴇxᴇᴅ ꜰɪʟᴇꜱ ✅')
 
-    elif query.data.startswith("checksub"):
+    if query.data.startswith("checksub"): #update
         try:
             ident, kk, file_id = query.data.split("#")
             chat = file_id.split("_")[0]
@@ -894,7 +894,7 @@ async def cb_handler(client: Client, query: CallbackQuery):
             btn += await is_subscribed(client, query.from_user.id, fsub_channels)
 
             req_fsub_channels = settings.get('reqfsub', AUTH_REQ_CHANNELS) if settings else AUTH_REQ_CHANNELS
-            btn += await is_req_subscribed(client, query.from_user.id, req_fsub_channels)
+            btn += await is_req_subscribed(client, query.from_user.id, req_fsub_channels, int(chat))
             
             if btn:
                 btn.append([InlineKeyboardButton("♻️ ᴛʀʏ ᴀɢᴀɪɴ ♻️", callback_data=f"checksub#{kk}#{file_id}")])

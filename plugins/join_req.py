@@ -1,20 +1,49 @@
 #Join Telegram Channel - @DREAMXBOTZ
 
-from pyrogram import Client, filters, enums
+from pyrogram import Client, filters
 from pyrogram.types import ChatJoinRequest
 from database.users_chats_db import db
-from info import ADMINS, AUTH_REQ_CHANNELS
-from pyrogram.filters import create
+from info import ADMINS, AUTH_REQ_CHANNELS, LOG_CHANNEL
+from utils import get_settings
 
-def is_auth_req_channel(_, __, update): #update
-    return update.chat.id in AUTH_REQ_CHANNELS
-
-@Client.on_chat_join_request(create(is_auth_req_channel))
+@Client.on_chat_join_request()
 async def join_reqs(client, message: ChatJoinRequest):
-    await db.add_join_req(message.from_user.id, message.chat.id)
+    user_id = message.from_user.id
+    chat_id = message.chat.id
+    invite_link = message.invite_link
+
+    # Handle globally defined required channels from info.py
+    if chat_id in AUTH_REQ_CHANNELS:
+        await db.add_join_req(user_id, chat_id)
+        # You can add a log message here if you wish
+
+    # Handle group-specific required channels by checking the invite link name
+    if invite_link and invite_link.name and invite_link.name.startswith("req_"):
+        print ("Invite link name:", invite_link.name)
+        print (invite_link)
+        try:
+            # Parse the name "req_{group_id}"
+            _, group_id_str = invite_link.name.split("_")
+            group_id = int(group_id_str)
+            
+            # Fetch the settings for the group that generated the link
+            settings = await get_settings(group_id)
+            req_channels = settings.get('reqfsub', [])
+
+            if chat_id in req_channels:
+                # This is a valid request from a group-specific link
+                await db.add_join_req(user_id, chat_id)
+                await client.send_message(LOG_CHANNEL, f"User {user_id} approved for channel {chat_id} via group {group_id}")
+
+        except (ValueError, IndexError) as e:
+            print(f"Could not parse invite link name '{invite_link.name}': {e}")
+        except Exception as e:
+            print(f"An error occurred in join_reqs handler: {e}")
+    
+        
 
 
 @Client.on_message(filters.command("delreq") & filters.private & filters.user(ADMINS))
 async def del_requests(client, message):
     await db.del_join_req()    
-    await message.reply("<b>⚙ ꜱᴜᴄᴄᴇꜱꜱғᴜʟʟʏ ᴄʜᴀɴɴᴇʟ ʟᴇғᴛ ᴜꜱᴇʀꜱ ᴅᴇʟᴇᴛᴇᴅ</b>")
+    await message.reply("<b>⚙️ ꜱᴜᴄᴄᴇꜱꜱғᴜʟʟʏ ᴄʜᴀɴɴᴇʟ ʟᴇғᴛ ᴜꜱᴇʀꜱ ᴅᴇʟᴇᴛᴇᴅ</b>")
