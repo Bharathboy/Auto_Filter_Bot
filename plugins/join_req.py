@@ -3,7 +3,7 @@
 from pyrogram import Client, filters
 from pyrogram.types import ChatJoinRequest
 from database.users_chats_db import db
-from info import ADMINS, AUTH_REQ_CHANNELS, LOG_CHANNEL
+from info import ADMINS, AUTH_REQ_CHANNELS
 from utils import get_settings
 
 
@@ -29,7 +29,6 @@ async def join_reqs(client, message: ChatJoinRequest):
 
             if chat_id in req_channels:
                 await db.add_join_req(user_id, chat_id)
-                await client.send_message(LOG_CHANNEL, f"User {user_id} approved for channel {chat_id} via group {group_id}")
 
         except (ValueError, IndexError) as e:
             print(f"Could not parse invite link name '{invite_link.name}': {e}")
