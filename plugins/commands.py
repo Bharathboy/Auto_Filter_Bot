@@ -228,7 +228,6 @@ async def start(client, message):
 
    
     if not await db.has_premium_access(message.from_user.id):
-        print("User doesn't have premium access", message.from_user.id)
         btn = []
         try:
             chat = int(data.split("_", 2)[1])
