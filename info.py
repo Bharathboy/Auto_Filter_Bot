@@ -187,6 +187,7 @@ BAD_WORDS = {
     "mkvcinemas",
     "primefix",
     "join",
+    "www"
 } # Set of bad words to filter out
    
 

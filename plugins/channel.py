@@ -6,7 +6,7 @@ from collections import defaultdict
 from plugins.Dreamxfutures.Imdbposter import get_movie_details, fetch_image
 from database.users_chats_db import db
 from pyrogram import Client, filters, enums
-from info import CHANNELS, MOVIE_UPDATE_CHANNEL, LINK_PREVIEW, ABOVE_PREVIEW
+from info import CHANNELS, MOVIE_UPDATE_CHANNEL, LINK_PREVIEW, ABOVE_PREVIEW, BAD_WORDS
 from Script import script
 from database.ia_filterdb import save_file
 from pyrogram.types import InlineKeyboardMarkup, InlineKeyboardButton
@@ -33,7 +33,7 @@ IGNORE_WORDS = {
     "japanese", "nf", "netflix", "sonyliv", "sony", "sliv", "amzn", "prime", 
     "primevideo", "hotstar", "zee5", "jio", "jhs", "aha", "hbo", "paramount", 
     "apple", "hoichoi", "sunnxt", "viki"
-}
+}|BAD_WORDS
 
 # Constants
 CAPTION_LANGUAGES = {
@@ -94,7 +94,8 @@ def normalize(s: str) -> str:
     return re.sub(r"\s+", " ", s).strip()
 
 def remove_ignored_words(text: str) -> str:
-    return " ".join(word for word in text.split() if word.lower() not in IGNORE_WORDS)
+    IGNORE_WORDS_LOWER = {w.lower() for w in IGNORE_WORDS}
+    return " ".join(word for word in text.split() if word.lower() not in IGNORE_WORDS_LOWER)
 
 def get_qualities(text: str) -> str:
     qualities = QUALITY_PATTERN.findall(text)
