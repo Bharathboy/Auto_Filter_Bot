@@ -33,7 +33,7 @@ class Database:
         return True
  
      
-    async def add_join_req(self, user_id: int, channel_id: int): #update
+    async def add_join_req(self, user_id: int, channel_id: int):
         await self.req.update_one(
             {'user_id': user_id},
             {

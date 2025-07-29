@@ -227,7 +227,7 @@ async def start(client, message):
         pre, grp_id, file_id = "", 0, data
 
    
-    if not await db.has_premium_access(message.from_user.id): #update
+    if not await db.has_premium_access(message.from_user.id):
         print("User doesn't have premium access", message.from_user.id)
         btn = []
         try:

@@ -50,9 +50,9 @@ class temp(object):
     TEMP_INVITE_LINKS = {}
 
 
-# In utils.py
 
-async def is_req_subscribed(bot, user_id, rqfsub_channels, group_id): # Add group_id #update
+#is_req_subscribed credit @bharath_boy (atleast dont remove credits if steal this code)
+async def is_req_subscribed(bot, user_id, rqfsub_channels, group_id):
     btn = []
     for ch_id in rqfsub_channels:
         if await db.has_joined_channel(user_id, ch_id):
@@ -69,7 +69,6 @@ async def is_req_subscribed(bot, user_id, rqfsub_channels, group_id): # Add grou
 
         try:
             chat   = await bot.get_chat(ch_id)
-            # Create a unique name for the invite link to track the source group
             invite_link_name = f"req_{group_id}"
             invite = await bot.create_chat_invite_link(
                 ch_id,
